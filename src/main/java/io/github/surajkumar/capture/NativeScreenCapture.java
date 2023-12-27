@@ -3,6 +3,7 @@ package io.github.surajkumar.capture;
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.*;
+import io.github.surajkumar.overlay.WindowInfo;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -62,22 +63,24 @@ public class NativeScreenCapture {
         return image;
     }
 
-    public static WinDef.HWND getWindowHandle(String windowTitle) {
+    public static WindowInfo getWindowHandle(String windowTitle) {
         User32 user32 = User32.INSTANCE;
-        AtomicReference<WinDef.HWND> foundHandle = new AtomicReference<>();
+        AtomicReference<WindowInfo> foundInfo = new AtomicReference<>();
         user32.EnumWindows((handle, arg1) -> {
             char[] windowText = new char[512];
             user32.GetWindowText(handle, windowText, 512);
             String wText = Native.toString(windowText).trim();
-            if (!wText.isEmpty()) {
-                if(wText.equals(windowTitle)) {
-                    foundHandle.set(handle);
-                    return false;
-                }
+            if (!wText.isEmpty() && wText.equals(windowTitle)) {
+                WinDef.RECT rect = new WinDef.RECT();
+                user32.GetWindowRect(handle, rect);
+                int width = rect.right - rect.left;
+                int height = rect.bottom - rect.top;
+                foundInfo.set(new WindowInfo(handle, rect.left, rect.top, width, height));
+                return false;
             }
             return true;
         }, null);
-        return foundHandle.get();
+        return foundInfo.get();
     }
 
     public static WinDef.HWND findWindowByTitle(String title) {
@@ -86,7 +89,7 @@ public class NativeScreenCapture {
 
     public static void main(String[] args) throws Exception {
         NativeScreenCapture capture = new NativeScreenCapture();
-        BufferedImage image = capture.capture(getWindowHandle(args[0]));
+        BufferedImage image = capture.capture(getWindowHandle("RuneLite - Papa Joestar").hwnd);
         ImageIO.write(image, "png", new File("screenshot.png"));
     }
 }
