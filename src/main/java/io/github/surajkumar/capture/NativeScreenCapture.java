@@ -4,7 +4,9 @@ import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.*;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static com.sun.jna.platform.win32.GDI32.SRCCOPY;
@@ -82,8 +84,9 @@ public class NativeScreenCapture {
         return User32.INSTANCE.FindWindow(null, title);
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         NativeScreenCapture capture = new NativeScreenCapture();
-        capture.capture(findWindowByTitle(args[0]));
+        BufferedImage image = capture.capture(getWindowHandle(args[0]));
+        ImageIO.write(image, "png", new File("screenshot.png"));
     }
 }
