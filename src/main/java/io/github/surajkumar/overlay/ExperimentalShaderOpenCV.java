@@ -72,7 +72,7 @@ public class ExperimentalShaderOpenCV extends JPanel {
      * works already but when there is no transparency then we need this function to allow the pass through.
      * @param frame The visible JFrame that can have user input pass through.
      */
-    private static void allowPassThrough(JFrame frame) {
+    public static void allowPassThrough(JFrame frame) {
         if(!frame.isVisible()) {
             throw new RuntimeException("JFrame must be set to visible for this to allow pass through");
         }
