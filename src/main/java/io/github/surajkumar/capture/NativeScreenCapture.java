@@ -89,7 +89,7 @@ public class NativeScreenCapture {
 
     public static void main(String[] args) throws Exception {
         NativeScreenCapture capture = new NativeScreenCapture();
-        BufferedImage image = capture.capture(getWindowHandle("RuneLite - Papa Joestar").hwnd);
+        BufferedImage image = capture.capture(getWindowHandle(args[0]).hwnd());
         ImageIO.write(image, "png", new File("screenshot.png"));
     }
 }
