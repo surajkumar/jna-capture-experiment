@@ -56,9 +56,8 @@ public class ExperimentShaderPanel extends JPanel {
     }
 
     private void triggerUpdate() {
-        this.removeAll();
         updateShader();
-        paintImmediately(paintRegion);
+        repaint();
     }
 
     /**
